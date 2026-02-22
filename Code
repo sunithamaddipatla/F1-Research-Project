@@ -1,0 +1,32 @@
+import fastf1
+import matplotlib.pyplot as plt
+from fastf1 import plotting
+
+session = fastf1.get_session(2021, "Silverstone", "R")
+session.load()
+
+ver_lap = session.laps.pick_drivers('VER').pick_laps(1)
+ham_lap = session.laps.pick_drivers('HAM').pick_laps(1)
+
+ver_tel = ver_lap.get_car_data().add_distance()
+ham_tel = ham_lap.get_car_data().add_distance()
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+ax1.plot(ver_tel['Distance'], ver_tel['Speed'], color='#4781D7')
+ax1.plot(ham_tel['Distance'], ham_tel['Speed'], color='#00D7B6')
+
+ax2.plot(ver_tel['Distance'], ver_tel['Time'].dt.total_seconds(), color='#4781D7')
+ax2.plot(ham_tel['Distance'], ham_tel['Time'].dt.total_seconds(), color='#00D7B6')
+
+ax1.set_xlabel('Distance in m')
+ax1.set_ylabel('Speed in km/h')
+
+ax2.set_xlabel('Distance in m')
+ax2.set_ylabel('Time in seconds')
+
+ax1.legend(('VERSTAPPEN', 'HAMILTON'), loc='upper right')
+ax2.legend(('VERSTAPPEN', 'HAMILTON'), loc='upper right')
+fig.suptitle(f"Lap 1 Comparison \n "
+             f"{session.event['EventName']} {session.event.year} Race")
+
+plt.show()
